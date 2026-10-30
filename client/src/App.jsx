@@ -92,7 +92,7 @@ function InventoryApp({ user, onLogout }) {
     const rows = [['Product', 'Code', 'Category', 'Price (INR)', 'Quantity', 'Stock Value'], ...products.map(p => [p.name, p.sku, p.category, p.price, p.stock, p.price * p.stock])];
     const csv = rows.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\r\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a');
-    link.href = url; link.download = 'stockease-inventory.csv'; link.click(); URL.revokeObjectURL(url); setNotice('Stock list downloaded.');
+    link.href = url; link.download = 'stockpilot-inventory.csv'; link.click(); URL.revokeObjectURL(url); setNotice('Stock list downloaded.');
   }
   const navItems = [
     { name: 'Dashboard', icon: '⌂' }, { name: 'Products', icon: '▦' }, { name: 'Add Product', icon: '＋', action: openAdd },
@@ -105,7 +105,7 @@ function InventoryApp({ user, onLogout }) {
 
   return <div className="app-shell">
     <aside className="sidebar">
-      <div className="brand"><div className="brand-mark">🛍</div><div><strong>Stock<span>Ease</span></strong><small>Your Shop, Made Simple</small></div></div>
+      <div className="brand"><div className="brand-mark">🛍</div><div><strong>Stock<span>Pilot</span></strong><small>Your Shop, Made Simple</small></div></div>
       <div className="nav-caption">YOUR SHOP</div>
       <nav className="side-nav">{navItems.map(item => <button key={item.name} className={`nav-item ${((page === 'Dashboard' && item.name === 'Dashboard') || (page === 'Products' && ['Products','Stock List'].includes(item.name)) || page === item.name) ? 'active' : ''}`} onClick={() => navigate(item.name)}><span className={`nav-icon nav-${item.name.toLowerCase().replaceAll(' ', '-')}`}>{item.icon}</span><span>{item.name}</span>{item.count > 0 && <b className="nav-count">{item.count}</b>}</button>)}</nav>
       <div className="sidebar-spacer" />
@@ -115,9 +115,9 @@ function InventoryApp({ user, onLogout }) {
     </aside>
 
     <main className="main-area">
-      <header className="topbar"><div className="mobile-brand"><span>🛍</span> Stock<span>Ease</span></div><div className="topbar-search"><span>⌕</span><input value={search} onChange={e => { setSearch(e.target.value); if (page === 'Dashboard') setPage('Products'); }} placeholder="Search products, code, or category..." aria-label="Search products" /></div><div className="topbar-user"><div className="top-avatar">{(user?.name || user?.email || 'S')[0].toUpperCase()}</div><div><strong>{user?.name || 'Shop Owner'}</strong><small>{loading ? 'Loading your stock…' : apiConnected ? 'Your shop is connected' : 'Connection issue'}</small></div><span className={`connection-dot ${apiConnected ? 'online' : ''}`} title={apiConnected ? 'Connected' : 'Not connected'} /></div></header>
+      <header className="topbar"><div className="mobile-brand"><span>🛍</span> Stock<span>Pilot</span></div><div className="topbar-search"><span>⌕</span><input value={search} onChange={e => { setSearch(e.target.value); if (page === 'Dashboard') setPage('Products'); }} placeholder="Search products, code, or category..." aria-label="Search products" /></div><div className="topbar-user"><div className="top-avatar">{(user?.name || user?.email || 'S')[0].toUpperCase()}</div><div><strong>{user?.name || 'Shop Owner'}</strong><small>{loading ? 'Loading your stock…' : apiConnected ? 'Your shop is connected' : 'Connection issue'}</small></div><span className={`connection-dot ${apiConnected ? 'online' : ''}`} title={apiConnected ? 'Connected' : 'Not connected'} /></div></header>
       <div className="page-content">
-        <section className="welcome-row"><div><div className="eyebrow">YOUR SHOP AT A GLANCE</div><h1>{page === 'Dashboard' ? <>Welcome to Stock<span>Ease</span>! <span className="wave">👋</span></> : page === 'Low Stock' ? 'Items to Restock' : page === 'Categories' ? 'Your Categories' : 'Your Products'}</h1><p>{page === 'Dashboard' ? 'Manage your shop stock easily and stay organized.' : page === 'Low Stock' ? 'These items may need a refill soon.' : page === 'Categories' ? 'Find products by the type of item.' : 'Find, update, and manage your shop items.'}</p></div><div className="welcome-actions"><button className="button button-light" onClick={exportCSV}>↓ Download Stock List</button><button className="button button-primary" onClick={openAdd}><span>＋</span> Add Product</button></div></section>
+        <section className="welcome-row"><div><div className="eyebrow">YOUR SHOP AT A GLANCE</div><h1>{page === 'Dashboard' ? <>Welcome to Stock<span>Pilot</span>! <span className="wave">👋</span></> : page === 'Low Stock' ? 'Items to Restock' : page === 'Categories' ? 'Your Categories' : 'Your Products'}</h1><p>{page === 'Dashboard' ? 'Manage your shop stock easily and stay organized.' : page === 'Low Stock' ? 'These items may need a refill soon.' : page === 'Categories' ? 'Find products by the type of item.' : 'Find, update, and manage your shop items.'}</p></div><div className="welcome-actions"><button className="button button-light" onClick={exportCSV}>↓ Download Stock List</button><button className="button button-primary" onClick={openAdd}><span>＋</span> Add Product</button></div></section>
         {!apiConnected && !loading && <div className="connection-warning"><span>⚠</span><div><strong>We couldn't load your stock</strong><p>Check your connection and refresh the page.</p></div></div>}
 
         <section className="stat-grid">
@@ -175,7 +175,7 @@ function AdminApp({ user, onLogout }) {
   const cardStyle = { background:'#fff', border:'1px solid #e5edf5', borderRadius:14, padding:'20px', boxShadow:'0 4px 16px rgba(30,55,90,.04)' };
   return <div style={{minHeight:'100vh',background:'#f6f8fb',color:'#10203e',fontFamily:'system-ui, sans-serif'}}>
     <header style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:16,padding:'18px clamp(16px,4vw,48px)',background:'#fff',borderBottom:'1px solid #e5edf5'}}>
-      <div><div style={{fontWeight:900,fontSize:24}}>Stock<span style={{color:'#09a86d'}}>Ease</span> <span style={{fontSize:12,color:'#657791'}}>ADMIN</span></div><div style={{fontSize:12,color:'#657791',marginTop:4}}>Platform control centre</div></div>
+      <div><div style={{fontWeight:900,fontSize:24}}>Stock<span style={{color:'#09a86d'}}>Pilot</span> <span style={{fontSize:12,color:'#657791'}}>ADMIN</span></div><div style={{fontSize:12,color:'#657791',marginTop:4}}>Platform control centre</div></div>
       <div style={{display:'flex',alignItems:'center',gap:12}}><span style={{fontSize:13,color:'#536783'}}>{user?.name || user?.email}</span><button className="button button-light" onClick={onLogout}>Logout</button></div>
     </header>
     <main style={{maxWidth:1400,margin:'0 auto',padding:'28px clamp(16px,4vw,48px)'}}>
@@ -200,7 +200,7 @@ function App() {
   useEffect(() => { if (!localStorage.getItem('stockpilot_token')) { setChecking(false); return; } getMe().then(data => setUser(data.user)).catch(() => localStorage.removeItem('stockpilot_token')).finally(() => setChecking(false)); }, []);
   async function submit(e) { e.preventDefault(); setError(''); if (mode === 'register' && password !== confirmPassword) { setError('Passwords do not match.'); return; } setWorking(true); try { const data = mode === 'login' ? await login(email,password) : await register(fullName,email,password); localStorage.setItem('stockpilot_token',data.token); setUser(data.user); } catch (err) { setError(err.message || 'Could not sign in. Please try again.'); } finally { setWorking(false); } }
   async function signOut() { try { await logout(); } catch {} localStorage.removeItem('stockpilot_token'); setUser(null); setPassword(''); }
-  if (checking) return <div className="auth-screen"><div className="auth-card auth-loading"><div className="auth-logo">🛍</div><h1>Stock<span>Ease</span></h1><p>Getting your shop ready…</p></div></div>;
+  if (checking) return <div className="auth-screen"><div className="auth-card auth-loading"><div className="auth-logo">🛍</div><h1>Stock<span>Pilot</span></h1><p>Getting your shop ready…</p></div></div>;
   if (!user) return <div className="auth-screen"><div className="auth-decoration auth-decoration-one"/><div className="auth-decoration auth-decoration-two"/><form className="auth-card" onSubmit={submit}><div className="auth-logo">🛍</div><div className="auth-kicker">YOUR SHOP, MADE SIMPLE</div><h1>{mode === 'login' ? 'Welcome back!' : 'Let’s set up your shop.'}</h1><p className="auth-subtitle">{mode === 'login' ? 'Sign in to see and manage your stock.' : 'Create your account to get started.'}</p>
     {mode === 'register' && <><label htmlFor="auth-name">Your Name</label><input id="auth-name" type="text" autoComplete="name" placeholder="Enter your name" value={fullName} onChange={e=>setFullName(e.target.value)} minLength={2} required/></>}
     <label htmlFor="auth-email">Email Address</label><input id="auth-email" type="email" autoComplete="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} required/>
