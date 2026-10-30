@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
@@ -133,8 +132,9 @@ async function auth(req, res, next) {
 
     if (!raw) return res.status(401).json({ error: 'Please log in.' });
 
+    // FIX: u.id is now selected so req.user.id is defined
     const result = await pool.query(
-      `SELECT s.user_id, u.email, u.name, u.role, u.status
+      `SELECT u.id, s.user_id, u.email, u.name, u.role, u.status
        FROM sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.token_hash = $1 AND s.expires_at > $2`,
@@ -343,6 +343,9 @@ app.put('/api/products/:id', auth, async (req, res, next) => {
 
     res.json(result.rows[0]);
   } catch (err) {
+    if (err.code === '23505') {
+      return res.status(409).json({ error: 'This SKU already exists.' });
+    }
     next(err);
   }
 });
